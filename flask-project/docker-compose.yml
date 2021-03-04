@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  web:
+    # Build Dockerfile in this directory
+    build: .
+
+    # Once build, set working directory...
+    working_dir: /app/app
+
+    expose:
+      - 5000
+
+    # run flask app
+    command: gunicorn --bind 0.0.0.0:5000 wsgi:app
+
+  nginx:
+    build: ./services/nginx
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - web
+    volumes:
+      - /etc/ssl/certs:/etc/ssl/certs
+      - /etc/ssl/private:/etc/ssl/private
